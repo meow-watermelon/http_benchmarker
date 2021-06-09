@@ -1,0 +1,10 @@
+method: 'GET'
+url: 'https://www.yahoo.com'
+concurrency: 50
+count: 3
+gap_time: 5
+timeout: 60
+mtls: 0
+tls_ca: ''
+tls_cert: ''
+tls_key: ''
