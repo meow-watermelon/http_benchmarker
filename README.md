@@ -16,8 +16,9 @@ yaml
 
 ## Features
 
-* Support HTTP GET / HEAD methods
+* Support HTTP GET / HEAD / POST methods
 * Support mTLS HTTPS connections
+* Allow customized headers in the request
 * Lightweight traffic creation by asyncio
 
 This benchmark tool CANNOT retrieve traffic latency metrics because `aiohttp` module does not record those metrics. This tool only prints out count of requests and HTTP Response Code.
@@ -50,10 +51,13 @@ concurrency: 50
 count: 3
 gap_time: 5
 timeout: 60
+headers:
+  'Content-Type': 'plain/text'
 mtls: 0
 tls_ca: ''
 tls_cert: ''
 tls_key: ''
+post_data: '{"key1": 1}'
 ```
 
 ### Explanations of Parameters
@@ -66,6 +70,8 @@ tls_key: ''
 | count | Integer | # of testing round | `5` |
 | gap_time | Float | Gap period between each round(second) | `1.0` |
 | timeout | Float | Connection total timeout(second) | `60` |
+| headers | Dictionary | HTTP headers | `'Content-Type': 'plain/text'` |
+| post_data | String | Data enclosed for POST body | `'{"key1": 1}'` |
 | mtls | Integer | mTLS enabling flag(0: disable; 1: enable) | `1` |
 | tls_ca | String | TLS CA certificate path | `'/opt/certs/ca.cert'` |
 | tls_cert | String | TLS certificate path | `'/opt/certs/cert.pem'` |
@@ -79,15 +85,18 @@ Please make sure the TLS related settings `tls_*` are in the configuration file 
 
 ```
 method: 'GET'
-url: 'http://www.yahoo.com'
+url: 'https://www.yahoo.com'
 concurrency: 50
 count: 3
-gap_time: 1
+gap_time: 5
 timeout: 60
+headers:
+  'Content-Type': 'plain/text'
 mtls: 0
 tls_ca: ''
 tls_cert: ''
 tls_key: ''
+post_data: '{"key1": 1}'
 ```
 
 ### Command Line Output
@@ -117,8 +126,9 @@ $
 ### Output Notes
 
 * If any exception is encountered, the HTTP RESPONSE CODE would be `000`.
+* `post_data` field in the configuration file is enabled only when using HTTP POST method.
 
 ## TODO
 
-* Add HTTP POST support
-* Add HTTP header support
+* ~~Add HTTP POST support~~
+* ~~Add HTTP header support~~

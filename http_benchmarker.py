@@ -21,9 +21,9 @@ def print_results(method, result):
         for rc in sorted(result[c]['response_code'].keys()):
             print('%-15d%-15s%-15d' %(c+1, rc, result[c]['response_code'][rc]['count']))
 
-async def http_get_resp(session, url, result):
+async def http_get_resp(session, config_dict, result):
     try:
-        async with session.get(url) as resp:
+        async with session.get(config_dict['url']) as resp:
             rc = str(resp.status)
     except:
         rc = '000'
@@ -35,9 +35,28 @@ async def http_get_resp(session, url, result):
         result['response_code'][rc] = {}
         result['response_code'][rc]['count'] = 1
 
-async def http_head_resp(session, url, result):
+async def http_head_resp(session, config_dict, result):
     try:
-        async with session.head(url, allow_redirects=True) as resp:
+        async with session.head(config_dict['url'], allow_redirects=True) as resp:
+            rc = str(resp.status)
+    except:
+        rc = '000'
+
+    if rc in result['response_code']:
+        result['response_code'][rc]['count'] += 1
+    else:
+        result['response_code'][rc] = {}
+        result['response_code'][rc]['count'] = 1
+
+async def http_post_resp(session, config_dict, result):
+    post_data = None
+
+    # check if POST data exists
+    if config_dict['post_data']:
+        post_data = config_dict['post_data']
+
+    try:
+        async with session.post(config_dict['url'], data=post_data) as resp:
             rc = str(resp.status)
     except:
         rc = '000'
@@ -49,6 +68,12 @@ async def http_head_resp(session, url, result):
         result['response_code'][rc]['count'] = 1
 
 async def http_call(http_resp, config, result):
+    # check if headers are set
+    headers = None
+
+    if config['headers']:
+        headers = config['headers']
+
     # check if mTLS is enabled
     ssl_context = None
     enable_cleanup_closed = False
@@ -64,7 +89,7 @@ async def http_call(http_resp, config, result):
     # set up client session
     timeout = aiohttp.ClientTimeout(total=config['timeout'])
 
-    async with aiohttp.ClientSession(connector=conn, timeout=timeout) as session:
+    async with aiohttp.ClientSession(connector=conn, timeout=timeout, headers=headers) as session:
         urls = [config['url'] for i in range(config['concurrency'])]
 
         for c in range(config['count']):
@@ -73,7 +98,7 @@ async def http_call(http_resp, config, result):
 
             tasks = []
             for url in urls:
-                task = asyncio.create_task(http_resp(session, url, result[c]))
+                task = asyncio.create_task(http_resp(session, config, result[c]))
                 tasks.append(task)
 
             await asyncio.gather(*tasks, return_exceptions=True)
@@ -111,3 +136,9 @@ if __name__ == '__main__':
         asyncio.run(http_call(http_head_resp, config_dict, result))
 
         print_results('HEAD', result)
+
+    # HTTP POST - process block
+    if config_dict['method'].upper() == 'POST':
+        asyncio.run(http_call(http_post_resp, config_dict, result))
+
+        print_results('POST', result)
