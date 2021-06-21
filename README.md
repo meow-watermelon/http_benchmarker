@@ -11,6 +11,7 @@ Following Python modules are needed to run this benchmark tool.
 ```
 aiohttp
 asyncio
+ssl
 yaml
 ```
 
