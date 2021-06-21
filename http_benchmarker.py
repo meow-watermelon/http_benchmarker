@@ -3,6 +3,7 @@
 import argparse
 import aiohttp
 import asyncio
+import ssl
 import yaml
 
 def load_config(config_file):
@@ -84,7 +85,7 @@ async def http_call(http_resp, config, result):
         enable_cleanup_closed = True
 
     # set up TCPConnector parameters
-    conn = aiohttp.TCPConnector(limit=config['concurrency'], limit_per_host=0, ssl_context=ssl_context, enable_cleanup_closed=enable_cleanup_closed)
+    conn = aiohttp.TCPConnector(limit=config['concurrency'], limit_per_host=0, ssl=ssl_context, enable_cleanup_closed=enable_cleanup_closed)
 
     # set up client session
     timeout = aiohttp.ClientTimeout(total=config['timeout'])
