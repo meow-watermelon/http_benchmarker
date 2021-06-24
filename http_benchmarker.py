@@ -29,7 +29,7 @@ async def http_get_resp(session, config_dict, result):
     except:
         rc = '000'
 
-    # save response code and sum of latency
+    # save response code
     if rc in result['response_code']:
         result['response_code'][rc]['count'] += 1
     else:
@@ -43,6 +43,7 @@ async def http_head_resp(session, config_dict, result):
     except:
         rc = '000'
 
+    # save response code
     if rc in result['response_code']:
         result['response_code'][rc]['count'] += 1
     else:
@@ -62,6 +63,7 @@ async def http_post_resp(session, config_dict, result):
     except:
         rc = '000'
 
+    # save response code
     if rc in result['response_code']:
         result['response_code'][rc]['count'] += 1
     else:
