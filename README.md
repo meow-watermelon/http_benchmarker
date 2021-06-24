@@ -11,6 +11,7 @@ Following Python modules are needed to run this benchmark tool.
 ```
 aiohttp
 asyncio
+ssl
 yaml
 ```
 
@@ -123,7 +124,7 @@ ROUND #        HTTP RC        # OF HTTP RC
 $
 ```
 
-### Output Notes
+## Notes
 
 * If any exception is encountered, the HTTP RESPONSE CODE would be `000`.
 * `post_data` field in the configuration file is enabled only when using HTTP POST method.
