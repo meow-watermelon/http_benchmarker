@@ -9,6 +9,7 @@ This is a small and lightweight HTTP traffic benchmark tool. It uses Async I/O t
 Following Python modules are needed to run this benchmark tool.
 
 ```
+aiofiles
 aiohttp
 asyncio
 ssl
@@ -47,7 +48,7 @@ The configuration file is using YAML format. Here's the example:
 
 ```
 method: 'GET'
-url: 'https://www.yahoo.com'
+url: 'http://www.yahoo.com'
 concurrency: 50
 count: 3
 gap_time: 5
@@ -58,6 +59,8 @@ mtls: 0
 tls_ca: ''
 tls_cert: ''
 tls_key: ''
+get_data_to_null: 1
+get_data_chunk_size: 65535
 post_data: '{"key1": 1}'
 ```
 
@@ -72,6 +75,8 @@ post_data: '{"key1": 1}'
 | gap_time | Float | Gap period between each round(second) | `1.0` |
 | timeout | Float | Connection total timeout(second) | `60` |
 | headers | Dictionary | HTTP headers | `'Content-Type': 'plain/text'` |
+| get_data_to_null | Integer | Write data to /dev/null flag(0: disable; 1: enable) | `1` |
+| get_data_chunk_size | Integer | Chunk size in byte of each writing operation | `65535` |
 | post_data | String | Data enclosed for POST body | `'{"key1": 1}'` |
 | mtls | Integer | mTLS enabling flag(0: disable; 1: enable) | `1` |
 | tls_ca | String | TLS CA certificate path | `'/opt/certs/ca.cert'` |
@@ -86,7 +91,7 @@ Please make sure the TLS related settings `tls_*` are in the configuration file 
 
 ```
 method: 'GET'
-url: 'https://www.yahoo.com'
+url: 'http://www.yahoo.com'
 concurrency: 50
 count: 3
 gap_time: 5
@@ -97,6 +102,8 @@ mtls: 0
 tls_ca: ''
 tls_cert: ''
 tls_key: ''
+get_data_to_null: 1
+get_data_chunk_size: 65535
 post_data: '{"key1": 1}'
 ```
 
@@ -127,6 +134,7 @@ $
 ## Notes
 
 * If any exception is encountered, the HTTP RESPONSE CODE would be `000`.
+* If user would like to benchmark actual GET download data performance, please enable `get_data_to_null` and set up a proper value on `get_data_chunk_size` parameter.
 * `post_data` field in the configuration file is enabled only when using HTTP POST method.
 * aiohttp loads only the headers when .get() is executed, letting you decide to pay the cost of loading the body afterward. [The aiohttp Request Lifecycle](https://docs.aiohttp.org/en/stable/http_request_lifecycle.html)
 
@@ -134,3 +142,4 @@ $
 
 * ~~Add HTTP POST support~~
 * ~~Add HTTP header support~~
+* ~~Add GET data support~~

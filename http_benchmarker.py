@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import aiofiles
 import aiohttp
 import asyncio
 import ssl
@@ -26,6 +27,15 @@ async def http_get_resp(session, config_dict, result):
     try:
         async with session.get(config_dict['url']) as resp:
             rc = str(resp.status)
+
+            # check if user wants to download the response body
+            if config_dict['get_data_to_null']:
+                async with aiofiles.open('/dev/null', 'wb') as f:
+                    while True:
+                        chunk = await resp.content.read(config_dict['get_data_chunk_size'])
+                        if not chunk:
+                            break
+                        await f.write(chunk)
     except:
         rc = '000'
 

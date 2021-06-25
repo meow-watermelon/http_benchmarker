@@ -10,4 +10,6 @@ mtls: 0
 tls_ca: ''
 tls_cert: ''
 tls_key: ''
+get_data_to_null: 1
+get_data_chunk_size: 65535
 post_data: '{"key1": 1}'
