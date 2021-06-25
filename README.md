@@ -128,6 +128,7 @@ $
 
 * If any exception is encountered, the HTTP RESPONSE CODE would be `000`.
 * `post_data` field in the configuration file is enabled only when using HTTP POST method.
+* aiohttp loads only the headers when .get() is executed, letting you decide to pay the cost of loading the body afterward. [The aiohttp Request Lifecycle](https://docs.aiohttp.org/en/stable/http_request_lifecycle.html)
 
 ## TODO
 
