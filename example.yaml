@@ -2,7 +2,7 @@ method: 'GET'
 url: 'http://www.yahoo.com'
 concurrency: 50
 count: 3
-gap_time: 5
+gap_time: 1
 timeout: 60
 headers:
   'Content-Type': 'plain/text'
@@ -11,5 +11,5 @@ tls_ca: ''
 tls_cert: ''
 tls_key: ''
 get_data_to_null: 1
-get_data_chunk_size: 65535
+get_data_chunk_size: 1048576
 post_data: '{"key1": 1}'
