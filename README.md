@@ -138,7 +138,7 @@ $
 * If user would like to benchmark actual GET download data performance, please enable `get_data_to_null` and set up a proper value on `get_data_chunk_size` parameter.
 * `post_data` field in the configuration file is enabled only when using HTTP POST method.
 * aiohttp loads only the headers when .get() is executed, letting you decide to pay the cost of loading the body afterward. [The aiohttp Request Lifecycle](https://docs.aiohttp.org/en/stable/http_request_lifecycle.html)
-* User would experience ceiling speed limit when the concurrency number is greater than a specific value. aiohttp is using single thread so a single processor core has its own limit on how much data it can process.
+* User would experience ceiling download speed limit when the concurrency number is greater than a specific value. aiohttp is using single thread so a single processor core has its own limit on how much data it can process.
 
 ## TODO
 
