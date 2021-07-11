@@ -30,7 +30,7 @@ Here's the [reason](https://github.com/aio-libs/aiohttp/issues/1309) why aiohttp
 ## Usage
 
 ```
-usage: http_benchmarker.py [-h] -c CONFIG
+usage: http_benchmarker.py [-h] -c CONFIG [-d]
 
 HTTP Traffic Benchmarker (asyncio-based)
 
@@ -38,6 +38,7 @@ optional arguments:
   -h, --help            show this help message and exit
   -c CONFIG, --config CONFIG
                         HTTP traffic config file
+  -d, --debug           Enable debug mode(show exception message)
 ```
 
 This tool reads the HTTP traffic parameters by using a configuration file. The next part `Configuration File` gives detailed explanations of parameters.

@@ -23,7 +23,7 @@ def print_results(method, result):
         for rc in sorted(result[c]['response_code'].keys()):
             print('%-15d%-15s%-15d' %(c+1, rc, result[c]['response_code'][rc]['count']))
 
-async def http_get_resp(session, config_dict, result):
+async def http_get_resp(session, config_dict, result, *, debug=False):
     try:
         async with session.get(config_dict['url']) as resp:
             rc = str(resp.status)
@@ -36,8 +36,10 @@ async def http_get_resp(session, config_dict, result):
                         if not chunk:
                             break
                         await f.write(chunk)
-    except:
+    except Exception as e:
         rc = '000'
+        if debug:
+            print(e)
 
     # save response code
     if rc in result['response_code']:
@@ -46,12 +48,14 @@ async def http_get_resp(session, config_dict, result):
         result['response_code'][rc] = {}
         result['response_code'][rc]['count'] = 1
 
-async def http_head_resp(session, config_dict, result):
+async def http_head_resp(session, config_dict, result, *, debug=False):
     try:
         async with session.head(config_dict['url'], allow_redirects=True) as resp:
             rc = str(resp.status)
-    except:
+    except Exception as e:
         rc = '000'
+        if debug:
+            print(e)
 
     # save response code
     if rc in result['response_code']:
@@ -60,7 +64,7 @@ async def http_head_resp(session, config_dict, result):
         result['response_code'][rc] = {}
         result['response_code'][rc]['count'] = 1
 
-async def http_post_resp(session, config_dict, result):
+async def http_post_resp(session, config_dict, result, *, debug=False):
     post_data = None
 
     # check if POST data exists
@@ -70,8 +74,10 @@ async def http_post_resp(session, config_dict, result):
     try:
         async with session.post(config_dict['url'], data=post_data) as resp:
             rc = str(resp.status)
-    except:
+    except Exception as e:
         rc = '000'
+        if debug:
+            print(e)
 
     # save response code
     if rc in result['response_code']:
@@ -80,7 +86,7 @@ async def http_post_resp(session, config_dict, result):
         result['response_code'][rc] = {}
         result['response_code'][rc]['count'] = 1
 
-async def http_call(http_resp, config, result):
+async def http_call(http_resp, config, result, debug_flag):
     # check if headers are set
     headers = None
 
@@ -111,7 +117,7 @@ async def http_call(http_resp, config, result):
 
             tasks = []
             for url in urls:
-                task = asyncio.create_task(http_resp(session, config, result[c]))
+                task = asyncio.create_task(http_resp(session, config, result[c], debug=debug_flag))
                 tasks.append(task)
 
             await asyncio.gather(*tasks, return_exceptions=True)
@@ -123,6 +129,8 @@ if __name__ == '__main__':
     # set up args
     parser = argparse.ArgumentParser(description="HTTP Traffic Benchmarker (asyncio-based)")
     parser.add_argument("-c", "--config", type=str, required=True, help="HTTP traffic config file")
+    parser.add_argument("-d", "--debug", dest="debug", action='store_true', help="Enable debug mode(show exception message)")
+    parser.set_defaults(debug=False)
     args = parser.parse_args()
 
     # load the benchmark config
@@ -140,18 +148,18 @@ if __name__ == '__main__':
 
     # HTTP GET - process block
     if config_dict['method'].upper() == 'GET':
-        asyncio.run(http_call(http_get_resp, config_dict, result))
+        asyncio.run(http_call(http_get_resp, config_dict, result, args.debug))
 
         print_results('GET', result)
 
     # HTTP HEAD - process block
     if config_dict['method'].upper() == 'HEAD':
-        asyncio.run(http_call(http_head_resp, config_dict, result))
+        asyncio.run(http_call(http_head_resp, config_dict, result, args.debug))
 
         print_results('HEAD', result)
 
     # HTTP POST - process block
     if config_dict['method'].upper() == 'POST':
-        asyncio.run(http_call(http_post_resp, config_dict, result))
+        asyncio.run(http_call(http_post_resp, config_dict, result, args.debug))
 
         print_results('POST', result)
